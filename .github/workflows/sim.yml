@@ -1,0 +1,41 @@
+name: sim
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  vunit:
+    runs-on: ubuntu-24.04
+    env:
+      UVVM_PATH: ${{ github.workspace }}/UVVM
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout UVVM (pinned)
+        uses: actions/checkout@v4
+        with:
+          repository: UVVM/UVVM
+          ref: 90d56e93c542bf0d5e2ab9f791cc7395bd1aa896
+          path: UVVM
+
+      - uses: ghdl/setup-ghdl@v1
+        with:
+          version: latest
+          backend: llvm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - run: pip install -r requirements.txt
+
+      - run: python run.py -p 4 --xunit-xml results.xml
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vunit-results
+          path: |
+            results.xml
+            vunit_out/test_output

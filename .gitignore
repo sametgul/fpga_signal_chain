@@ -1,0 +1,35 @@
+# Python / VUnit
+.venv/
+__pycache__/
+vunit_out/
+results.xml
+UVVM_*.txt
+
+# GHDL
+*.cf
+*.o
+*.ghw
+*.vcd
+
+# Vivado (projects are rebuilt from Tcl; never commit generated project files)
+*.xpr
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+*.gen/
+*.jou
+*.log
+*.str
+.Xil/
+build/
+
+# Vitis
+.metadata/
+_ide/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
