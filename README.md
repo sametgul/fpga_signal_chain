@@ -11,28 +11,25 @@ For learning and reference material, see [logic_playground](https://github.com/s
 ```
 ip/<core>/
   rtl/vhdl/        synthesizable source (VHDL-2008, no vendor primitives)
-  sim/uvvm/        self-checking UVVM testbenches, run by VUnit
+  sim/vhdl/        self-checking testbenches, named *_tb.vhd
 projects/<name>/   board projects, rebuilt from Tcl (from stage 2)
 docs/              stream contract and design notes
-run.py             VUnit test runner
+scripts/           run_sims.sh: runs every testbench with GHDL
 ```
 
-Later stages add `rtl/sv`, `hls` and `matlab` folders under each core. Every implementation of a core shares the same ports and the same [stream contract](docs/stream_contract.md).
+Later stages add `rtl/sv`, `hls` and `matlab` folders. Every implementation of a core shares the same ports and the same [stream contract](docs/stream_contract.md).
 
 ## Running the tests
 
-You need GHDL, Python 3 (CI uses 3.13), and a checkout of [UVVM](https://github.com/UVVM/UVVM). CI pins UVVM to commit `90d56e9`.
+You only need GHDL.
 
 ```sh
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-export UVVM_PATH=/path/to/UVVM           # defaults to ../UVVM
-.venv/bin/python run.py -p 4             # run all tests
-.venv/bin/python run.py "*throughput*"   # run matching tests
-.venv/bin/python run.py --gui <test>     # open the waveform viewer
+scripts/run_sims.sh                    # run every testbench
+scripts/run_sims.sh axis_reg_slice     # run one core's testbenches
+gtkwave build/sim/axis_reg_slice/axis_reg_slice_tb.ghw   # view waveforms
 ```
 
-The first run compiles the UVVM libraries this repo needs. Later runs recompile only what changed.
+Testbenches are plain, self-checking VHDL-2008. A failed `assert` with severity `error` or `failure` fails the test, and a testbench ends with `std.env.finish`. CI runs the same script on every push.
 
 ## Vivado
 
@@ -44,8 +41,8 @@ Each stage adds exactly one new unknown.
 
 | # | Deliverable | New unknown |
 |---|---|---|
-| 0 | Repo, VUnit + UVVM regression, CI, `axis_reg_slice` | Build and test infrastructure |
-| 1 | Pmod AD1 core with a UVVM testbench | The AD1 protocol and its model |
+| 0 | Repo, GHDL regression, CI, `axis_reg_slice` with a self-checking testbench | Build and test infrastructure |
+| 1 | Pmod AD1 core with a self-checking testbench | The AD1 protocol and its model |
 | 2 | ZedBoard bring-up, PL only, ILA | Constraints and hardware debug |
 | 3 | Pmod DA4 sink, then ADC → DAC passthrough | Two converters' timing across one stream |
 | 4 | First FIR, coefficients over AXI4-Lite | Fixed point and a register interface |
@@ -55,6 +52,6 @@ Each stage adds exactly one new unknown.
 | 7 | AXI DMA to DDR through an HP port | DMA and memory-mapped AXI |
 | 8 | Streaming to a PC over Ethernet (lwIP) | Networking |
 | 9 | Own AXI4 full master and slave | Writing AXI4 yourself |
-| 10 | SV ports, cocotb with numpy reference models, HLS, MATLAB HDL Coder | Additional languages and flows |
+| 10 | UVVM versions of earlier testbenches, SV ports, cocotb with numpy reference models, HLS, MATLAB HDL Coder | Verification frameworks, additional languages and flows |
 
 Stage 3, the ADC → DAC passthrough working on hardware, is the gate before stage 10.
