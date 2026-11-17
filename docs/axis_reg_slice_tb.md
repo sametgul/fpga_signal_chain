@@ -112,6 +112,17 @@ A testbench is only useful if it fails when the design is wrong. Each bug below 
 | Skid never captures | `beat 3: got tdata 0x00000004` (lost beat) |
 | Output overwritten during a stall | `beat 1: got tdata 0x00000003` |
 
-## Not covered yet
+## Throughput: `axis_reg_slice_throughput_tb`
 
-**Throughput.** The skid buffer exists so the slice can run at one beat per clock while the sink is always ready. A slice that only accepts every other beat (for example `s_axis_tready <= not (skid_valid or m_valid)`) still passes this testbench, because nothing measures speed.
+The skid buffer exists so the slice can run at one beat per clock while the sink is always ready. A slice that only accepts a beat while its output register is empty (one beat every two clocks) still passes `axis_reg_slice_tb`, because that testbench checks only *what* arrives, not *how fast*.
+
+A second testbench, [`axis_reg_slice_throughput_tb.vhd`](../ip/axis_reg_slice/sim/vhdl/axis_reg_slice_throughput_tb.vhd), checks the speed:
+
+- The source sends 100 beats back to back (no gaps), and the sink keeps `tready = '1'`.
+- `measure_proc` counts clock cycles from the first input transfer to the last one (`tlast`) and asserts that the count is below `NUM_BEATS`. At one beat per clock it is exactly `NUM_BEATS - 1`.
+- Measuring on the input side is enough: the slice holds at most 2 beats, so a slow output forces `s_axis_tready` low within a few cycles.
+
+| Slice | `axis_reg_slice_tb` | `axis_reg_slice_throughput_tb` |
+|---|---|---|
+| Real slice | PASS | PASS (99 cycles) |
+| Correct but half-speed slice | PASS | FAIL: `took 198 cycles` |
