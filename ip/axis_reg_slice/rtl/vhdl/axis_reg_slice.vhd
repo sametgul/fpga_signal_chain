@@ -63,9 +63,9 @@ begin
 					m_data  <= s_axis_tdata;
 					m_last  <= s_axis_tlast;
 				end if;
+			elsif s_axis_tvalid = '1' and skid_valid = '0' then
 				-- Output stalled, but s_axis_tready was still 1, so this input beat
 				-- was accepted. Park it in the skid; s_axis_tready drops next cycle.
-			elsif s_axis_tvalid = '1' and skid_valid = '0' then
 				skid_valid <= '1';
 				skid_data  <= s_axis_tdata;
 				skid_last  <= s_axis_tlast;
