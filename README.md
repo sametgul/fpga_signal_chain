@@ -26,8 +26,9 @@ You only need GHDL.
 ```sh
 scripts/run_sims.sh                    # run every testbench
 scripts/run_sims.sh axis_reg_slice     # run one core's testbenches
-gtkwave build/sim/axis_reg_slice/axis_reg_slice_tb.ghw   # view waveforms
 ```
+
+Each testbench writes its waveform to `build/sim/<core>/<testbench>.ghw`. Open it with a viewer that reads GHW, such as [Surfer](https://surfer-project.org/) (standalone or as a VS Code extension) or GTKWave.
 
 Testbenches are plain, self-checking VHDL-2008. A failed `assert` with severity `error` or `failure` fails the test, and a testbench ends with `std.env.finish`. CI runs the same script on every push.
 

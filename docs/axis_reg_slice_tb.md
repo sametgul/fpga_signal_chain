@@ -4,8 +4,9 @@ Self-checking testbench for the [`axis_reg_slice`](axis_reg_slice.md) skid buffe
 
 ```sh
 scripts/run_sims.sh axis_reg_slice
-gtkwave build/sim/axis_reg_slice/axis_reg_slice_tb.ghw
 ```
+
+The waveform is written to `build/sim/axis_reg_slice/axis_reg_slice_tb.ghw`; open it in Surfer (the screenshots below are from Surfer) or GTKWave.
 
 ## What it proves
 
@@ -98,7 +99,7 @@ With the cursor exactly on this edge, the value column says `s_axis_tvalid = 0` 
 
 Without the skid, beat 505 would have been lost here.
 
-**GTKWave tip:** to read sampled values in the value column, put the cursor a little left of an edge, not exactly on it.
+**Viewer tip (Surfer, GTKWave, any viewer):** to read sampled values in the value column, put the cursor a little left of an edge, not exactly on it.
 
 ## Testing the test
 
