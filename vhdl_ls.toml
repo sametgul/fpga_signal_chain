@@ -1,0 +1,9 @@
+# VHDL language server (VHDL LS) project config: which files belong to which library.
+# ieee and std come with the language server itself. The library can't be
+# named "work": in VHDL, "work" always means "the library this file is in",
+# so `entity work.axis_reg_slice` resolves to defaultlib here.
+[libraries]
+defaultlib.files = [
+    "ip/*/rtl/vhdl/*.vhd",
+    "ip/*/sim/vhdl/*.vhd",
+]

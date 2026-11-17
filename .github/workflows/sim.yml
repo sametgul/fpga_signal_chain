@@ -12,7 +12,7 @@ jobs:
 
       - uses: ghdl/setup-ghdl@v1
         with:
-          version: latest
+          version: 6.0.0 # same as the local Homebrew GHDL; bump both together
           backend: llvm
 
       - run: scripts/run_sims.sh
