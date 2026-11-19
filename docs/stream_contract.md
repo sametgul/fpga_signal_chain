@@ -17,7 +17,7 @@ Every block between the ADC and the DAC follows this contract, so any filter fit
 
 | Converter | Native format | Adapter |
 |---|---|---|
-| Pmod AD1 (AD7476A) | 12-bit unsigned, offset binary | `s = (code - 2048) << 4` |
+| Pmod AD1 (AD7476A) | 12-bit unsigned, straight binary (0 V → 0, VDD → 4095) | `s = (code - 2048) << 4` |
 | Pmod DA4 (AD5628) | 12-bit unsigned | `code = (s >> 4) + 2048` |
 
 ## `TLAST`
