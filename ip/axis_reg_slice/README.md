@@ -2,7 +2,11 @@
 
 An AXI4-Stream register slice: a pipeline stage that adds one flip-flop boundary in **both** directions of a stream link, at full throughput and without changing what flows through it.
 
-Source: [`ip/axis_reg_slice/rtl/vhdl/axis_reg_slice.vhd`](../ip/axis_reg_slice/rtl/vhdl/axis_reg_slice.vhd)
+Source: [`ip/axis_reg_slice/rtl/vhdl/axis_reg_slice.vhd`](rtl/vhdl/axis_reg_slice.vhd)
+
+- Testbenches, waveforms and the bugs they catch: [docs/testbench.md](docs/testbench.md)
+- The stream rules every core follows: [stream_contract.md](../../docs/stream_contract.md)
+- What "beat", "frame" and "burst" mean: [axi_stream_terms.md](../../docs/axi_stream_terms.md)
 
 ## Why it exists
 
@@ -78,7 +82,7 @@ s_axis_tready <= not skid_valid;
 
 The upstream block sends continuously. The downstream block stalls for cycles 2 and 3.
 
-![axis_reg_slice timing diagram](img/axis_reg_slice_timing.svg)
+![axis_reg_slice timing diagram](docs/img/axis_reg_slice_timing.svg)
 
 | Cycle | What happens |
 |---|---|
@@ -92,7 +96,7 @@ The upstream block sends continuously. The downstream block stalls for cycles 2 
 
 Reading the green beats on `m_axis_tdata` from left to right gives D0, D1, D2, D3, D4. Nothing is lost or duplicated. D1 sits on the output from cycle 2 to cycle 4 but only transfers in cycle 4, the first cycle where `tvalid` and `tready` are both high.
 
-The testbench exercises exactly this path; see [axis_reg_slice_tb.md](axis_reg_slice_tb.md) for a simulation waveform of it.
+The testbench exercises exactly this path; see [docs/testbench.md](docs/testbench.md) for a simulation waveform of it.
 
 ## Properties
 

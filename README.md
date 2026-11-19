@@ -10,10 +10,12 @@ For learning and reference material, see [logic_playground](https://github.com/s
 
 ```
 ip/<core>/
+  README.md        what the core does, its ports and design notes
+  docs/            longer notes and images for this core (e.g. testbench walkthrough)
   rtl/vhdl/        synthesizable source (VHDL-2008, no vendor primitives)
   sim/vhdl/        self-checking testbenches, named *_tb.vhd
 projects/<name>/   board projects, rebuilt from Tcl (from stage 2)
-docs/              stream contract and design notes
+docs/              repo-wide notes: stream contract, AXI-Stream terms
 scripts/           run_sims.sh: runs every testbench with GHDL
 ```
 

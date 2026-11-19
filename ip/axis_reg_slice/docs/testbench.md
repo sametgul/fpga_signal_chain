@@ -1,6 +1,6 @@
 # Testbench `axis_reg_slice_tb`
 
-Self-checking testbench for the [`axis_reg_slice`](axis_reg_slice.md) skid buffer: [`ip/axis_reg_slice/sim/vhdl/axis_reg_slice_tb.vhd`](../ip/axis_reg_slice/sim/vhdl/axis_reg_slice_tb.vhd).
+Self-checking testbench for the [`axis_reg_slice`](../README.md) skid buffer: [`ip/axis_reg_slice/sim/vhdl/axis_reg_slice_tb.vhd`](../sim/vhdl/axis_reg_slice_tb.vhd).
 
 ```sh
 scripts/run_sims.sh axis_reg_slice
@@ -10,7 +10,7 @@ The waveform is written to `build/sim/axis_reg_slice/axis_reg_slice_tb.ghw`; ope
 
 ## What it proves
 
-The source sends the beats 0, 1, 2, … 999, with `TLAST` on the last one. The checker requires that exactly those beats come out of the slice **in order, with nothing lost, duplicated or changed**, and `TLAST` only on beat 999. Random gaps on the input and random backpressure on the output force the skid buffer to fill and drain many times during the run. (For what a "beat" is, see [axi_stream_terms.md](axi_stream_terms.md).)
+The source sends the beats 0, 1, 2, … 999, with `TLAST` on the last one. The checker requires that exactly those beats come out of the slice **in order, with nothing lost, duplicated or changed**, and `TLAST` only on beat 999. Random gaps on the input and random backpressure on the output force the skid buffer to fill and drain many times during the run. (For what a "beat" is, see [axi_stream_terms.md](../../../docs/axi_stream_terms.md).)
 
 ## Structure
 
@@ -117,7 +117,7 @@ A testbench is only useful if it fails when the design is wrong. Each bug below 
 
 The skid buffer exists so the slice can run at one beat per clock while the sink is always ready. A slice that only accepts a beat while its output register is empty (one beat every two clocks) still passes `axis_reg_slice_tb`, because that testbench checks only *what* arrives, not *how fast*.
 
-A second testbench, [`axis_reg_slice_throughput_tb.vhd`](../ip/axis_reg_slice/sim/vhdl/axis_reg_slice_throughput_tb.vhd), checks the speed:
+A second testbench, [`axis_reg_slice_throughput_tb.vhd`](../sim/vhdl/axis_reg_slice_throughput_tb.vhd), checks the speed:
 
 - The source sends 100 beats back to back (no gaps), and the sink keeps `tready = '1'`.
 - `measure_proc` counts clock cycles from the first input transfer to the last one (`tlast`) and asserts that the count is below `NUM_BEATS`. At one beat per clock it is exactly `NUM_BEATS - 1`.

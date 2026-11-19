@@ -1,6 +1,6 @@
 -- AXI4-Stream register slice: registers TDATA/TVALID/TLAST forward and
 -- TREADY backward, at full throughput (1 beat/cycle), using a one-entry skid buffer.
--- See docs/axis_reg_slice.md for a walkthrough and timing diagram.
+-- See ip/axis_reg_slice/README.md for a walkthrough and timing diagram.
 library ieee;
 use ieee.std_logic_1164.all;
 
