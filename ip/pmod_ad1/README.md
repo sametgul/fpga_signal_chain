@@ -173,7 +173,7 @@ At VDD = 3.3 V, from Table 4:
 | Generic | Type | Default | Meaning |
 |---|---|---|---|
 | `ACLK_FREQ` | positive | 100_000_000 | `aclk` frequency in Hz |
-| `SCLK_FREQ` | positive | 20_000_000 | Highest SCLK frequency allowed, in Hz. The core uses the fastest SCLK it can make from `aclk` that doesn't exceed this |
+| `SCLK_MAX` | positive | 20_000_000 | Upper limit for SCLK in Hz, not the SCLK itself. The core uses the fastest SCLK it can make from `aclk` (50/50 duty cycle) within this limit: 16.7 MHz at 100 MHz, 20 MHz at 40 MHz |
 | `SAMPLE_PERIOD` | positive | 102 | `aclk` cycles from one CS falling edge to the next. An `assert` rejects values below the minimum from section 4 |
 | `FRAME_LEN` | natural | 0 | Beats per `TLAST`, 0 = never (stream contract) |
 
@@ -181,17 +181,19 @@ At VDD = 3.3 V, from Table 4:
 
 | Port | Dir | Width | Reset value | Meaning |
 |---|---|---|---|---|
-| `aclk` | in | 1 | | Main clock |
-| `aresetn` | in | 1 | | Synchronous reset, active low |
+| `aclk` | in | 1 | (input) | Main clock |
+| `aresetn` | in | 1 | (input) | Synchronous reset, active low |
 | `spi_csn` | out | 1 | 1 | Chip select, active low |
 | `spi_sclk` | out | 1 | 1 | SPI clock, idles high |
-| `spi_data0` | in | 1 | | SDATA of ADC 1 (analog input A0), channel 0 |
-| `spi_data1` | in | 1 | | SDATA of ADC 2 (analog input A1), channel 1 |
-| `m_axis_tdata` | out | 32 | none | Channel 1 in [31:16], channel 0 in [15:0] |
+| `spi_data0` | in | 1 | (input) | SDATA of ADC 1 (analog input A0), channel 0 |
+| `spi_data1` | in | 1 | (input) | SDATA of ADC 2 (analog input A1), channel 1 |
+| `m_axis_tdata` | out | 32 | not reset | Channel 1 in [31:16], channel 0 in [15:0] |
 | `m_axis_tvalid` | out | 1 | 0 | A sample is available |
-| `m_axis_tready` | in | 1 | | The downstream block accepts the sample |
-| `m_axis_tlast` | out | 1 | none | Last beat of a frame |
+| `m_axis_tready` | in | 1 | (input) | The downstream block accepts the sample |
+| `m_axis_tlast` | out | 1 | not reset | Last beat of a frame |
 | `overflow` | out | 1 | 0 | Sticky: a sample was dropped. Cleared by reset |
+
+The outputs with a reset value also start with that value when the FPGA is configured, before any reset. Data signals aren't reset, because they're ignored while `tvalid` is low.
 
 ### Stream behavior
 

@@ -8,7 +8,7 @@ use ieee.math_real.all; -- ceil(), for constants only
 entity pmod_ad1 is
 	generic (
 		ACLK_FREQ     : positive := 100_000_000; -- Hz
-		SCLK_FREQ     : positive := 20_000_000;  -- Hz, upper limit
+		SCLK_MAX      : positive := 20_000_000;  -- Hz, upper limit for SCLK
 		SAMPLE_PERIOD : positive := 102;         -- aclk cycles, CS falling to CS falling
 		FRAME_LEN     : natural  := 0            -- beats per tlast, 0 = never
 	);
@@ -31,21 +31,21 @@ entity pmod_ad1 is
 end entity pmod_ad1;
 
 architecture rtl of pmod_ad1 is
-	-- Step 1: constants from the generics
+	-- TODO: constants from the generics
 begin
-	-- Step 1: asserts on the generics
+	-- TODO: asserts on the generics
 
-	-- Step 2: CS and SCLK
+	-- TODO: CS and SCLK
 	spi_csn  <= '1';
 	spi_sclk <= '1';
 
-	-- Step 3: shift registers, discard the first conversion
+	-- TODO: shift registers, discard the first conversion
 
-	-- Step 4: 16-bit conversion, tvalid
+	-- TODO: 16-bit conversion, tvalid
 	m_axis_tdata  <= (others => '0');
 	m_axis_tvalid <= '0';
 
-	-- Step 5: overflow, tlast
+	-- TODO: overflow, tlast
 	m_axis_tlast <= '0';
 	overflow     <= '0';
 

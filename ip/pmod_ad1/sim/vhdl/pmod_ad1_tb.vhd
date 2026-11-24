@@ -12,7 +12,7 @@ end entity pmod_ad1_tb;
 
 architecture sim of pmod_ad1_tb is
 	constant ACLK_FREQ     : positive := 100_000_000;
-	constant SCLK_FREQ     : positive := 20_000_000;
+	constant SCLK_MAX      : positive := 20_000_000;
 	constant SAMPLE_PERIOD : positive := 102;
 	constant FRAME_LEN     : natural  := 0;
 
@@ -46,7 +46,7 @@ begin
 	dut : entity work.pmod_ad1
 		generic map(
 			ACLK_FREQ     => ACLK_FREQ,
-			SCLK_FREQ     => SCLK_FREQ,
+			SCLK_MAX      => SCLK_MAX,
 			SAMPLE_PERIOD => SAMPLE_PERIOD,
 			FRAME_LEN     => FRAME_LEN
 		)
@@ -102,11 +102,11 @@ begin
 		wait;
 	end process;
 
-	-- Stimulus on vin0/vin1: YOUR CODE (step 3)
+	-- TODO: stimulus on vin0/vin1
 
-	-- Sink, m_axis_tready: YOUR CODE (step 4)
+	-- TODO: sink, m_axis_tready
 
-	-- Checker on m_axis_*: YOUR CODE (step 4)
+	-- TODO: checker on m_axis_*
 
 	-- Ends the simulation after 20 sample periods. Replace it when the checker
 	-- knows how many beats to expect: pass when done, fail on a timeout.

@@ -1,50 +1,25 @@
-# How a core gets built
-
-The RTL and its testbench grow **together, in small steps**. If the whole design is written first, the first failing simulation could be caused by anything. If each piece is tested as it's added, the bug is almost always in the lines just written.
+# Design and verification flow
 
 ```mermaid
 flowchart LR
-    DS([Datasheet]) --> SPEC[Spec<br/>core README]
-    DS --> MODEL[Model<br/>+ its own testbench]
-    SPEC --> RTL
+    DS([Datasheet]) --> SPEC[Specification]
+    DS --> MODEL[Chip model]
+    SPEC --> RTL[RTL]
+    SPEC --> TB[Self-checking testbench]
     MODEL --> TB
-    subgraph LOOP [Repeat for each step]
-        RTL[Add a little RTL] --> TB[Add its check]
-        TB --> RUN{Passes?}
-        RUN -- no --> RTL
-        RUN -- yes --> COMMIT[Commit]
-        COMMIT -- next step --> RTL
-    end
-    COMMIT -- last step --> VERIF[Try to break it:<br/>random traffic, corner cases, mutants]
-    VERIF --> HW([Hardware])
+    RTL --> SIM{Simulation}
+    TB --> SIM
+    SIM --> MUT[Mutation testing]
+    MUT --> HW([Hardware measurement])
 ```
 
-## Two kinds of testing
+| Part | What it is |
+|---|---|
+| **Specification** | The core's README: protocol, timing budget, ports and behavior, with datasheet references. |
+| **Chip model** | For cores that talk to an external chip: a behavioral model written from the datasheet, with timing checks and its own testbench. It drives `'X'` while data may be changing and `'Z'` when nothing drives the line. |
+| **RTL** | Synthesizable VHDL-2008, developed in small increments together with its testbench. |
+| **Self-checking testbench** | Plain VHDL-2008 with random gaps, backpressure and corner cases. It checks that the expected number of results arrived, not only that no error occurred. |
+| **Mutation testing** | Bugs are put into the design on purpose, and the testbench has to catch every one. See the [results for `axis_reg_slice`](../ip/axis_reg_slice/docs/testbench.md#testing-the-test). |
+| **Hardware measurement** | The measured result is compared with the model and the datasheet, for example the ADC's [SNR and ENOB](../ip/pmod_ad1/docs/fft_measurement.md). |
 
-| | Quick checks while building | Verification at the end |
-|---|---|---|
-| **Question** | Does what I just wrote work? | Can I break it? |
-| **Tools** | Waveform, a few asserts | Self-checking, random traffic, mutants |
-| **When** | Every 20 to 50 lines | When the design looks finished |
-
-A design needs both. Quick checks alone miss the corner cases, and verification alone finds every bug at once, at the end.
-
-## Rules
-
-1. **Write the spec first.** If a behavior doesn't fit in a sentence, it isn't understood yet.
-2. **Write the model from the datasheet, not from the RTL.** Otherwise both share the same misreading.
-3. **Decide the expected result before running.** Looked at afterwards, almost any waveform seems right.
-4. **Commit after every step that works.**
-5. **Check that something happened.** "No errors" also passes for a design that does nothing, so count the beats or conversions too.
-6. **Prove the testbench.** Break the design on purpose; every bug must be caught. See the [mutants for `axis_reg_slice`](../ip/axis_reg_slice/docs/testbench.md#testing-the-test).
-
-## Example: `pmod_ad1`
-
-| Step | RTL | Testbench | Done when |
-|---|---|---|---|
-| 1 | Entity, constants, asserts | Clock, reset, two ADC models | It compiles, and a bad `SAMPLE_PERIOD` is rejected |
-| 2 | CS and SCLK | Count the conversions; the models check the timing | The expected number of conversions, and no violations |
-| 3 | Shift registers, discard | Known input voltages, compare the codes | Codes match on both channels |
-| 4 | Conversion to 16 bits, `tvalid` | Checker on `m_axis_*`, sink always ready | Every sample matches |
-| 5 | `overflow`, `tlast` | Stall the sink, check drops and frames | Matches "Stream behavior" in the [spec](../ip/pmod_ad1/README.md#stream-behavior) |
-| 6 | Nothing new | Random inputs and `tready`, reset mid-frame, 40 MHz, mutants | Every mutant is caught |
+Every push runs all testbenches in CI.

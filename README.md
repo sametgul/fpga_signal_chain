@@ -4,7 +4,7 @@ Reusable, CI-tested FPGA signal-chain blocks: ADC → DSP → DAC. All blocks co
 
 The target board is a ZedBoard with a Pmod AD1 (ADC) and a Pmod DA4 (DAC). The cores themselves are board-agnostic: board-specific details live only in `projects/`.
 
-Every core is built in small, tested steps: spec, model, RTL and testbench together, then mutants. See [how a core gets built](docs/development_flow.md).
+Every core has a specification and a self-checking testbench that is itself tested by breaking the design on purpose. See the [design and verification flow](docs/development_flow.md).
 
 For learning and reference material, see [logic_playground](https://github.com/sametgul/logic_playground).
 
