@@ -23,14 +23,14 @@ Every block between the ADC and the DAC follows this contract, so any filter fit
 ## `TLAST`
 
 - `TLAST` marks the end of a frame, for consumers that work in blocks such as DMA or Ethernet.
-- A source asserts it every `FRAME_LEN` beats; set `FRAME_LEN = 0` to never assert it.
+- A source asserts it every `FRAME_LEN` beats; set `FRAME_LEN = 0` to never assert it. Dropped samples don't count, so a frame always has exactly `FRAME_LEN` beats.
 - A processing core passes `TLAST` through with the sample it belongs to.
 
 ## Real-time rules
 
 Converters run on a fixed sample clock and cannot wait for the stream.
 
-- **ADC source:** never stalls. If `TREADY` is low when a new sample is ready, the sample is **dropped** and a sticky `overflow` flag is set.
+- **ADC source:** never stalls. If the previous beat is still waiting for `TREADY` when a new sample is ready, the **new** sample is **dropped** and a sticky `overflow` flag is set.
 - **DAC sink:** if no new sample has arrived by its update time, it **holds the last value** and sets a sticky `underflow` flag.
 - **Processing cores:** must sustain one beat per sample period on average. They may stall briefly, but their worst-case latency must fit inside the source's slack.
 

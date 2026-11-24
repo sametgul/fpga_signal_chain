@@ -3,6 +3,7 @@
 # Usage: scripts/run_sims.sh [core ...]   (no args = all cores)
 # A test fails if GHDL exits non-zero, i.e. an assert of severity error/failure fired.
 set -uo pipefail
+shopt -s nullglob # a core may have a model and testbench before it has RTL
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 GHDL_FLAGS=(--std=08)
@@ -15,7 +16,7 @@ fi
 passed=(); failed=()
 for core in "${cores[@]}"; do
   tbs=("$ROOT/ip/$core"/sim/vhdl/*_tb.vhd)
-  [ -e "${tbs[0]}" ] || continue
+  [ ${#tbs[@]} -gt 0 ] || continue
   work="$ROOT/build/sim/$core"
   mkdir -p "$work"
 
