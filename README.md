@@ -4,6 +4,8 @@ Reusable, CI-tested FPGA signal-chain blocks: ADC → DSP → DAC. All blocks co
 
 The target board is a ZedBoard with a Pmod AD1 (ADC) and a Pmod DA4 (DAC). The cores themselves are board-agnostic: board-specific details live only in `projects/`.
 
+Every core is built in small, tested steps: spec, model, RTL and testbench together, then mutants. See [how a core gets built](docs/development_flow.md).
+
 For learning and reference material, see [logic_playground](https://github.com/sametgul/logic_playground).
 
 ## Layout
@@ -15,7 +17,7 @@ ip/<core>/
   rtl/vhdl/        synthesizable source (VHDL-2008, no vendor primitives)
   sim/vhdl/        self-checking testbenches, named *_tb.vhd
 projects/<name>/   board projects, rebuilt from Tcl (from stage 2)
-docs/              repo-wide notes: stream contract, AXI-Stream terms
+docs/              repo-wide notes: stream contract, AXI-Stream terms, development flow
 scripts/           run_sims.sh: runs every testbench with GHDL
 ```
 
